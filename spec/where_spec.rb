@@ -35,4 +35,10 @@ describe 'Symbol enhancements' do
     subject { User.where { :name =~ 'tender%' }.to_sql }
     it { should =~ /WHERE \(name like 'tender%'\)/ }
   end
+
+  context 'outside of where block' do
+    specify {
+      expect { :omg > 1 }.to raise_error ArgumentError
+    }
+  end
 end
