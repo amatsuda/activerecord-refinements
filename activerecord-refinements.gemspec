@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Activerecord::Refinements::VERSION
   gem.authors       = ["Akira Matsuda"]
   gem.email         = ["ronnie@dio.jp"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = 'Adding clean and powerful query syntax on AR using refinements'
+  gem.summary       = 'ActiveRecord + Ruby 2.0 refinements'
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)

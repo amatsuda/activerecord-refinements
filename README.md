@@ -1,6 +1,6 @@
-# Activerecord::Refinements
+# ActiveRecord::Refinements
 
-TODO: Write a gem description
+ActiveRecord + Ruby 2.0 refinements
 
 ## Installation
 
@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Please read the spec.
 
 ## Contributing
 
