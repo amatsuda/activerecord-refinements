@@ -5,32 +5,8 @@ module ActiveRecord
   module Refinements
     module WhereBlockSyntax
       refine Symbol do
-        def ==(val)
-          {self => val}
-        end
-
-        def !=(val)
-          ["#{self} <> ?", val]
-        end
-
-        def =~(val)
-          ["#{self} like ?", val]
-        end
-
-        def >(val)
-          ["#{self} > ?", val]
-         end
-
-        def >=(val)
-          ["#{self} >= ?", val]
-        end
-
-        def <(val)
-          ["#{self} < ?", val]
-         end
-
-        def <=(val)
-          ["#{self} <= ?", val]
+        %i[== != =~ > >= < <=].each do |op|
+          define_method(op) {|val| [self, op, val] }
         end
       end
     end
@@ -38,8 +14,30 @@ module ActiveRecord
     class WhereBlockEvaluator
       using ActiveRecord::Refinements::WhereBlockSyntax
 
+      def initialize(table)
+        @table = table
+      end
+
       def evaluate(&block)
-        instance_eval &block
+        col, op, val = instance_eval &block
+        case op
+        when :==
+          @table[col].eq val
+        when :!=
+          @table[col].not_eq val
+        when :=~
+          @table[col].matches val
+        when :>
+          @table[col].gt val
+        when :>=
+          @table[col].gteq val
+        when :<
+          @table[col].lt val
+        when :<=
+          @table[col].lteq val
+        else
+          raise "unexpected op: #{op}"
+        end
       end
     end
   end
@@ -50,7 +48,7 @@ module ActiveRecord
 
       relation = clone
       if block
-        evaluator = ActiveRecord::Refinements::WhereBlockEvaluator.new
+        evaluator = ActiveRecord::Refinements::WhereBlockEvaluator.new(table)
         relation.where_values += build_where(evaluator.evaluate(&block))
       else
         relation.where_values += build_where(opts, rest)
