@@ -6,7 +6,7 @@ describe 'Symbol enhancements' do
     it { should =~ /WHERE "users"."name" = 'matz'/ }
   end
 
-  describe '#=~' do
+  describe '#!=' do
     subject { User.where { :name != 'nobu' }.to_sql }
     it { should =~ /WHERE \("users"."name" != 'nobu'\)/ }
   end
