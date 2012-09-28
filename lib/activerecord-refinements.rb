@@ -40,20 +40,22 @@ module ActiveRecord
         end
       end
     end
+
+    module QueryMethods
+      def where(opts = nil, *rest, &block)
+        if block
+          evaluator = ActiveRecord::Refinements::WhereBlockEvaluator.new(table)
+          clone.tap do |relation|
+            relation.where_values += build_where(evaluator.evaluate(&block))
+          end
+        else
+          super
+        end
+      end
+    end
   end
 
   module QueryMethods
-    def where(opts = nil, *rest, &block)
-      return self if opts.blank? && block.nil?
-
-      relation = clone
-      if block
-        evaluator = ActiveRecord::Refinements::WhereBlockEvaluator.new(table)
-        relation.where_values += build_where(evaluator.evaluate(&block))
-      else
-        relation.where_values += build_where(opts, rest)
-      end
-      relation
-    end
+    prepend ActiveRecord::Refinements::QueryMethods
   end
 end

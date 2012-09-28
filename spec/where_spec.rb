@@ -42,3 +42,9 @@ describe 'Symbol enhancements' do
     }
   end
 end
+
+# just to make sure that this plugin does not break AR
+describe 'AR default where syntax' do
+  subject { User.where(name: 'Ruby', age: 19).to_sql }
+  it { should =~ /WHERE "users"."name" = 'Ruby' AND "users"."age" = 19/ }
+end
