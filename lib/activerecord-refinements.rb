@@ -3,33 +3,43 @@ require 'active_record'
 
 module ActiveRecord
   module Refinements
-    refine Symbol do
-      def ==(val)
-        {self => val}
-      end
+    module WhereBlockSyntax
+      refine Symbol do
+        def ==(val)
+          {self => val}
+        end
 
-      def !=(val)
-        ["#{self} <> ?", val]
-      end
+        def !=(val)
+          ["#{self} <> ?", val]
+        end
 
-      def =~(val)
-        ["#{self} like ?", val]
-      end
+        def =~(val)
+          ["#{self} like ?", val]
+        end
 
-      def >(val)
-        ["#{self} > ?", val]
-      end
+        def >(val)
+          ["#{self} > ?", val]
+         end
 
-      def >=(val)
-        ["#{self} >= ?", val]
-      end
+        def >=(val)
+          ["#{self} >= ?", val]
+        end
 
-      def <(val)
-        ["#{self} < ?", val]
-      end
+        def <(val)
+          ["#{self} < ?", val]
+         end
 
-      def <=(val)
-        ["#{self} <= ?", val]
+        def <=(val)
+          ["#{self} <= ?", val]
+        end
+      end
+    end
+
+    class WhereBlockEvaluator
+      using ActiveRecord::Refinements::WhereBlockSyntax
+
+      def evaluate(&block)
+        instance_eval &block
       end
     end
   end
@@ -40,7 +50,8 @@ module ActiveRecord
 
       relation = clone
       if block
-        relation.where_values += build_where(Module.new { using ActiveRecord::Refinements }.module_eval(&block))
+        evaluator = ActiveRecord::Refinements::WhereBlockEvaluator.new
+        relation.where_values += build_where(evaluator.evaluate(&block))
       else
         relation.where_values += build_where(opts, rest)
       end
