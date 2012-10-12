@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["ronnie@dio.jp"]
   gem.description   = 'Adding clean and powerful query syntax on AR using refinements'
   gem.summary       = 'ActiveRecord + Ruby 2.0 refinements'
-  gem.homepage      = ""
+  gem.homepage      = 'https://github.com/amatsuda/activerecord-refinements'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
